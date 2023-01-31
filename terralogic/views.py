@@ -236,7 +236,7 @@ def Add_user_to_room(request):
 
 # @authentication_classes((UserJSONWebTokenAuthentication, ))
 # @permission_classes((IsAuthenticated, ))
-@api_view(['DELETE'])  # Delete artist from organaization
+@api_view(['DELETE']) 
 def Delete_user(request, id):
     
     try:

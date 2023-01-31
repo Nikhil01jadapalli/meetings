@@ -166,9 +166,9 @@ def room_list(request):
 
 @api_view(["GET", "PUT", "DELETE"])
 @permission_classes([IsAuthenticated])
-def room_detail(request, pk):
+def room_detail(request, id):
     try:
-        room = Room.objects.get(pk=pk)
+        room = Room.objects.get(id=id)
     except Room.DoesNotExist:
         return Response({"message": "Room not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -231,6 +231,7 @@ def Add_user_to_room(request):
             data=[],
 
         )
+
 
 
 

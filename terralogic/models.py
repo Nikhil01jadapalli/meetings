@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+# from django.contrib.auth.models import user
 from django.db import models
 from django.contrib import admin
 # Create your models here.
@@ -31,31 +30,30 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password)
         user.is_superuser = True
         user.is_staff = True
+        # user.check_password = True
         user.save()
         return user
 
-AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
-                   'twitter': 'twitter', 'email': 'email'}
+AUTH_PROVIDERS = {'email': 'email'}
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=255, unique=True, db_index=True)
+    username = models.CharField(max_length=255, db_index=True)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
-    # is_verified = models.BooleanField(default=False)
-    # is_active = models.BooleanField(default=True)
-    # is_staff = models.BooleanField(default=False)
+    # name = models.CharField(max_length=50 ,blank=True)
+    # user = models.OneToOneField(user,on_delete=models.CASCADE)
+    forget_password_token =models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    userformail = models.EmailField( max_length=255,blank=True)
+
     link=models.URLField()
-    # idforuser=models.CharField(max_length=255)
     auth_provider = models.CharField(
         max_length=255, blank=False,
         null=False, default=AUTH_PROVIDERS.get('email'))
     
- 
 
-    USERNAME_FIELD = 'username'
+
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
 
@@ -80,29 +78,43 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Room(models.Model):
 
-    """
-    Room Model for group calling
-    """
- 
-    ROOM_TYPE = [
-        ("OTA", "Open to all"),
-        ("IO", "Invite only"),
-    ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # answerCandidates = models.CharField(max_length=255,  db_index=True)
-
-    title = models.CharField(max_length=200)
-    type_of = models.CharField(
-        max_length=3,
-        choices=ROOM_TYPE,
-        default="OTA",
-    )
+    meeting_id =models.CharField(max_length=200)
     created_on = models.DateTimeField(auto_now_add=True)
 
+
+
+
+class meeting_candidate(models.Model):
+    meeting_id =models.ForeignKey(Room, related_name ="meeeting_id",on_delete=models.CASCADE)
+    candidate_id=models.ForeignKey(User, related_name ="candidate_id",on_delete=models.CASCADE)
+    accepted = models.CharField(max_length=50, blank=True)
+    owner = models.CharField(max_length=50,blank=True,null=True) 
     
 
 
-class Roomuser(models.Model):
-    user =models.ForeignKey(User, related_name= "user_id", blank=True,null=True, on_delete=models.CASCADE)
-    Room = models.ForeignKey(Room, related_name="Room_id",blank=True,null=True,on_delete=models.CASCADE)
+    
+
+# class forgetpassword(models.Model):
+#     email = models.ForeignKey(User, related_name ="meeeting_id",on_delete=models.CASCADE)
+#     # user =models.ForeignKey(User, related_name ="username",on_delete=models.CASCADE)
+#     forget_password_token =models.CharField(max_length=100)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     new_password =models.CharField(max_length=100)
+
+
+
+
+
+# class MeetingParticipant(models.Model):
+#     Room = models.ForeignKey(Room,related_name='Room',on_delete=models.CASCADE)
+#     participants = models.CharField(max_length=80)
+#     # user_id
+#     username=models.ForeignKey(User,related_name='username',on_delete=models.CASCADE)
+#     email =models.ForeignKey(User,related_name='email',on_delete=models.CASCADE)
+#     owener =models.CharField( max_length=50)
+
+
+
+
+
 
